@@ -44,3 +44,47 @@ Uygulamayı tarayıcı üzerinden çalıştırmak için:
 
 Bu proje açık kaynaklı bir yazılımdır.
 
+## ENGLISH
+# Çeka 🤖
+
+Çeka is an advanced AI assistant application that brings together the world's most powerful AI models under one roof and operates via an API.
+
+## 🌟 Supported AI Models
+
+Thanks to API integration, the application communicates seamlessly with the following leading AI services:
+
+* **ChatGPT** (OpenAI)
+* **Gemini** (Google)
+* **Claude** (Anthropic)
+* **DeepSeek**
+* **Groq** (High-speed inference engine)
+* **Grok** (xAI)
+
+---
+
+## 📱 Installation and Usage
+
+### 1. Android (.apk) Installation
+To install the Android version of the application on your device:
+1. Download the **`Çeka.apk`** file from this repository.
+2. Make sure that the "Install from Unknown Sources" permission is enabled on your device.
+ 3. Complete the installation process by opening the file.
+
+### 2. Web (.html) Version
+To run the application via a browser:
+1. Download the **`Çeka.html`** file from the repository to your computer.
+2. Double-click the file to run it directly in any modern browser (Chrome, Edge, Safari, Firefox).
+
+---
+
+## 🛠️ How it Works?
+
+Çeka transmits the commands or questions it receives from the user to the API system integrated in the background. Depending on the model you choose (e.g., ChatGPT or DeepSeek), the relevant artificial intelligence engine processes the query and returns the result to the user interface within seconds.
+
+> **Note:** You may need API keys for the relevant services to use the application at full performance.
+
+---
+
+## 📄 License
+
+This project is open-source software.
