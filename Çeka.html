@@ -10,6 +10,10 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ── Sparkle SVG ikonu (✦ karakterinin yerini alır — font glif ölçüleri
+     cihazdan cihaza değiştiği için tutarsız/küçük görünüyordu) ── */
+  .sparkle-svg { display: block; flex-shrink: 0; }
+
   /* ── Tema Değişkenleri ── */
   :root {
     --bg:          #0a0a0f;
@@ -532,9 +536,20 @@
   [data-theme="light"] body::after { display: none; }
 
   /* ── Tüm içerik z-index ── */
-  header, #chat, #input-area, #key-screen {
+  header, #input-area, #key-screen {
     position: relative;
     z-index: 1;
+  }
+
+  /* header, açık olan "⋮" menüsü #chat'in altında kalıp tıklanamaz hale gelmesin diye
+     #chat'ten daha yüksek bir stacking context'te olmalı (ikisi kardeş, aynı z-index'te
+     olsaydı DOM'da sonra gelen #chat üstte render edilirdi) */
+  #chat {
+    position: relative;
+    z-index: 1;
+  }
+  header {
+    z-index: 2;
   }
 
   header {
@@ -593,6 +608,7 @@
     animation: logoFloat 3s ease-in-out infinite;
     clip-path: path('M32,0 C49.7,0 64,14.3 64,32 C64,49.7 49.7,64 32,64 C14.3,64 0,49.7 0,32 C0,14.3 14.3,0 32,0 Z');
   }
+  .key-logo .sparkle-svg { width: 32px; height: 32px; }
 
   @keyframes logoFloat {
     0%, 100% { transform: translateY(0) rotate(0deg); box-shadow: 0 0 40px var(--accent-glow); }
@@ -858,12 +874,8 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    flex-shrink: 1;
-    max-width: calc(100vw - 160px);
+    overflow: visible;
+    flex-shrink: 0;
     padding-bottom: 2px;
   }
   .header-right::-webkit-scrollbar { display: none; }
@@ -1076,6 +1088,42 @@
 
   .header-btn:active { transform: scale(0.95); }
 
+  /* ── Header "Daha Fazla" Menü (tüm ekran boyutlarında görünür) ── */
+  .header-more-wrap { position: relative; display: block; flex-shrink: 0; }
+  .header-full-btn { display: none; }
+  .header-more-btn {
+    width: 36px; height: 36px; background: none; border: 1px solid var(--border);
+    border-radius: 12px; color: var(--muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s var(--ease-spring); flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .header-more-btn:hover, .header-more-btn.open { color: var(--accent); border-color: var(--accent); }
+  .header-more-btn:active { transform: scale(0.93); }
+  .header-more-btn svg { width: 18px; height: 18px; }
+  .header-more-dropdown {
+    position: absolute; top: calc(100% + 8px); right: 0;
+    background: var(--bg-secondary); border: 1px solid var(--border-light);
+    border-radius: 18px; padding: 8px; min-width: 200px;
+    max-width: calc(100vw - 32px);
+    z-index: 99999;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px var(--border);
+    opacity: 0; transform: translateY(-10px) scale(0.95);
+    pointer-events: none; transition: all 0.25s var(--ease-spring);
+    backdrop-filter: blur(20px);
+  }
+  .header-more-dropdown.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+  .header-more-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 12px; border-radius: 12px; cursor: pointer;
+    font-size: 13px; color: var(--text); font-weight: 500;
+    transition: all 0.2s var(--ease-spring);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .header-more-item:hover { background: var(--surface-hover); transform: translateX(3px); }
+  .header-more-item:active { transform: scale(0.97); }
+  .header-more-item span { flex: 1; }
+
   .theme-btn {
     font-size: 14px;
     padding: 2px 10px;
@@ -1149,6 +1197,7 @@
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 20px;
     font-size: 32px;
+    color: #fff;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     box-shadow: 0 0 40px var(--accent-glow);
     position: relative;
@@ -1255,6 +1304,7 @@
     transition: all 0.3s var(--ease-spring);
     clip-path: path('M16,0 C24.8,0 32,7.2 32,16 C32,24.8 24.8,32 16,32 C7.2,32 0,24.8 0,16 C0,7.2 7.2,0 16,0 Z');
   }
+  .msg-avatar .sparkle-svg { width: 16px; height: 16px; }
 
   .msg:hover .msg-avatar {
     transform: scale(1.08);
@@ -1268,6 +1318,7 @@
   .msg.ai .msg-avatar {
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     box-shadow: 0 0 16px var(--accent-glow);
+    color: #fff;
   }
 
   .msg-body { flex: 1; min-width: 0; }
@@ -2069,10 +2120,6 @@
     .suggestion-chip { font-size: 12px; padding: 6px 14px; }
     .header-btn { font-size: 10px; padding: 3px 10px; }
     .model-badge { font-size: 9px; padding: 3px 10px; }
-    .input-wrap { padding: 4px 4px 4px 14px; border-radius: 16px; }
-    #user-input { font-size: 14px; }
-    #send-btn { width: 36px; height: 36px; }
-    #send-btn svg { width: 15px; height: 15px; }
     .empty-icon { width: 60px; height: 60px; font-size: 26px; }
     #empty-state h2 { font-size: 20px; }
     .game-bar { gap: 8px; }
@@ -2080,6 +2127,23 @@
     .game-bar-label { font-size: 11.5px; }
     .game-bar-sub { font-size: 9px; }
     .game-bar-icon { font-size: 18px; }
+
+    /* Header: "⋮" menüsü artık tüm boyutlarda temel kuralda tanımlı, taşma riski yok */
+
+    /* Input alanı: 5 buton + textarea dar ekrana sığsın diye küçült */
+    .input-wrap { padding: 4px 4px 4px 12px; border-radius: 16px; gap: 4px; }
+    #user-input { font-size: 14px; padding: 6px 2px; }
+    #file-btn, #mic-btn, #live-btn, #cam-toggle-btn {
+      width: 32px; height: 32px;
+      clip-path: path('M16,0 C24.8,0 32,7.2 32,16 C32,24.8 24.8,32 16,32 C7.2,32 0,24.8 0,16 C0,7.2 7.2,0 16,0 Z');
+    }
+    #file-btn svg { width: 15px; height: 15px; }
+    #mic-btn svg { width: 15px; height: 15px; }
+    #live-btn svg { width: 15px; height: 15px; }
+    #cam-toggle-btn svg { width: 15px; height: 15px; }
+    #send-btn { width: 34px; height: 34px; }
+    #send-btn svg { width: 14px; height: 14px; }
+    .char-counter { display: none; }
   }
 
   @media (max-width: 400px) {
@@ -2091,6 +2155,11 @@
     .game-bar-label { font-size: 11px; }
     .game-bar-sub { font-size: 8.5px; }
     .game-bar-icon { font-size: 16px; }
+
+    /* Çok dar ekranlarda kamera ve canlı-mod butonlarını da menüye taşımak yerine biraz daha küçült */
+    #file-btn, #mic-btn, #live-btn, #cam-toggle-btn { width: 30px; height: 30px; }
+    #send-btn { width: 32px; height: 32px; }
+    .input-wrap { padding: 4px 4px 4px 10px; }
   }
 
   /* ── Sayfa Yükleme Animasyonu ── */
@@ -2139,22 +2208,12 @@
   }
 
 </style>
-<!-- ── meSpeak.js: Tamamen yerel, internetsiz TTS motoru (eSpeak tabanlı) ──
-     Android WebView'de SpeechSynthesis çalışmadığı için kullanılıyor.
-     Üç dosya da proje köküne (bu HTML ile aynı klasöre) konulmalı:
-       1) mespeak.js            → ana kütüphane (yüklenen dosya: v1.9.7.1, non-minified)
-       2) mespeak_config.json   → motor konfigürasyonu
-       3) voices/tr.json        → Türkçe ses verisi — meSpeak.speak() içinde
-                                   voice_id olarak dosyanın İÇİNDEKİ "voice_id" alanı
-                                   kullanılır (dosya adı değil). Resmi meSpeak Türkçe
-                                   ses dosyasında bu alan "tr" olarak tanımlıdır.
-     Kaynak: http://www.masswerk.at/mespeak (resmi proje sayfası)
-     CDN DEĞİL — bu dosyalar indirilip yerel olarak servis edilmeli, yoksa
-     internet bağımlılığı geri gelir ve WebView'de dosya:// veya app'in kendi
-     asset yolundan yüklenmesi gerekir. -->
-<script src="mespeak.js"></script>
+<!-- ── Ses Sentezi (TTS): tarayıcının yerleşik SpeechSynthesis API'si
+     kullanılıyor — harici kütüphane/dosya gerekmiyor. Detaylar için
+     liveMode IIFE içindeki "TTS: Web Speech API" bölümüne bakın. -->
 </head>
 <body>
+
 
 <!-- Dinamik Arka Plan Kanvası -->
 <canvas id="particles-canvas"></canvas>
@@ -2221,7 +2280,7 @@
 <!-- API Key Ekranı -->
 <div id="key-screen">
   <div class="key-card">
-    <div class="key-logo">✦</div>
+    <div class="key-logo"><svg viewBox="0 0 24 24" fill="currentColor" class="sparkle-svg"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg></div>
     <h2>Çeka'ya Hoş Geldin</h2>
     <p style="margin-bottom:16px;color:var(--text-secondary);font-size:13px;">Bir model seç ve API anahtarını gir.</p>
 
@@ -2321,12 +2380,29 @@
         <i class="chevron">▼</i>
       </button>
     </div>
-    <button class="header-btn theme-btn" id="themeToggle" onclick="toggleTheme()" title="Temayı değiştir">Temayı değiştir 🌙</button>
-    <button class="header-btn" onclick="openSpModal()" title="Sistem Promptu">Sistem Promptu 🧠</button>
-    <button class="header-btn" onclick="openColorPanel()" title="Tema Rengi">Tema Rengi 🎨</button>
-    <button class="header-btn" onclick="openExportModal()" title="Sohbeti Dışa Aktar">📤 Dışa Aktar</button>
-    <button class="header-btn" onclick="showKeyScreen()">🔑 API Anahtarı</button>
-    <button class="header-btn" onclick="downloadLatestApk()" title="En güncel APK'yı indir">⬇️ Güncelle</button>
+    <button class="header-btn theme-btn header-full-btn" id="themeToggle" onclick="toggleTheme()" title="Temayı değiştir">Temayı değiştir 🌙</button>
+    <button class="header-btn header-full-btn" onclick="openSpModal()" title="Sistem Promptu">Sistem Promptu 🧠</button>
+    <button class="header-btn header-full-btn" onclick="openColorPanel()" title="Tema Rengi">Tema Rengi 🎨</button>
+    <button class="header-btn header-full-btn" onclick="openExportModal()" title="Sohbeti Dışa Aktar">📤 Dışa Aktar</button>
+    <button class="header-btn header-full-btn" onclick="showKeyScreen()">🔑 API Anahtarı</button>
+    <button class="header-btn header-full-btn" onclick="downloadLatestApk()" title="En güncel APK'yı indir">⬇️ Güncelle</button>
+    <div class="header-more-wrap" id="headerMoreWrap">
+      <button class="header-more-btn" id="headerMoreBtn" onclick="toggleHeaderMore()" title="Daha fazla">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/>
+          <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+          <circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+      <div class="header-more-dropdown" id="headerMoreDropdown">
+        <div class="header-more-item" onclick="toggleTheme(); toggleHeaderMore();">🌙 <span>Temayı değiştir</span></div>
+        <div class="header-more-item" onclick="openSpModal(); toggleHeaderMore();">🧠 <span>Sistem Promptu</span></div>
+        <div class="header-more-item" onclick="openColorPanel(); toggleHeaderMore();">🎨 <span>Tema Rengi</span></div>
+        <div class="header-more-item" onclick="openExportModal(); toggleHeaderMore();">📤 <span>Dışa Aktar</span></div>
+        <div class="header-more-item" onclick="showKeyScreen(); toggleHeaderMore();">🔑 <span>API Anahtarı</span></div>
+        <div class="header-more-item" onclick="downloadLatestApk(); toggleHeaderMore();">⬇️ <span>Güncelle</span></div>
+      </div>
+    </div>
   </div>
 </header>
 <script>
@@ -2502,11 +2578,11 @@
     <!-- Gemini Live Modu Butonu -->
     <button id="live-btn" title="Canlı Sesli Asistan" onclick="openLiveMode()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-        <line x1="12" y1="19" x2="12" y2="22"/>
-        <line x1="8" y1="22" x2="16" y2="22"/>
-        <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
+        <path d="M8 5v14"/>
+        <path d="M12 2v20"/>
+        <path d="M16 5v14"/>
+        <path d="M4 9v6"/>
+        <path d="M20 9v6"/>
       </svg>
     </button>
     <!-- Kamera Butonu -->
@@ -3179,6 +3255,14 @@
     wrap.classList.toggle('open', dropdown.classList.contains('open'));
   }
 
+  // ── Header "Daha Fazla" menüsü (mobil) ──
+  function toggleHeaderMore() {
+    const btn      = document.getElementById('headerMoreBtn');
+    const dropdown = document.getElementById('headerMoreDropdown');
+    dropdown.classList.toggle('open');
+    btn.classList.toggle('open', dropdown.classList.contains('open'));
+  }
+
   function selectModel(provider) {
     currentProvider = provider;
     const wrap     = document.getElementById('modelSelectorWrap');
@@ -3236,6 +3320,14 @@
     if (wrap && dropdown && !wrap.contains(e.target) && !dropdown.contains(e.target)) {
       dropdown.classList.remove('open');
       wrap.classList.remove('open');
+    }
+
+    const moreWrap = document.getElementById('headerMoreWrap');
+    const moreDrop = document.getElementById('headerMoreDropdown');
+    const moreBtn  = document.getElementById('headerMoreBtn');
+    if (moreWrap && moreDrop && !moreWrap.contains(e.target)) {
+      moreDrop.classList.remove('open');
+      if (moreBtn) moreBtn.classList.remove('open');
     }
   });
 
@@ -3761,7 +3853,7 @@
 
     const avatar = document.createElement('div');
     avatar.className = 'msg-avatar';
-    avatar.textContent = role === 'user' ? '👤' : '✦';
+    avatar.innerHTML = role === 'user' ? '👤' : '<svg viewBox="0 0 24 24" fill="currentColor" class="sparkle-svg"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>';
 
     const body   = document.createElement('div');
     body.className = 'msg-body';
@@ -3906,7 +3998,7 @@
 
     const avatar = document.createElement('div');
     avatar.className = 'msg-avatar';
-    avatar.textContent = '✦';
+    avatar.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" class="sparkle-svg"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>';
 
     const body = document.createElement('div');
     body.className = 'msg-body';
@@ -4152,101 +4244,32 @@
       if (statusEl()) statusEl().textContent = map[state] || '…';
     }
 
-    // ── TTS: meSpeak.js — tamamen yerel, internetsiz ses sentezi ──
-    // Android WebView SpeechSynthesis'i engellediği için, ve Google TTS/
-    // ResponsiveVoice internet + CDN gerektirdiği için meSpeak.js kullanılıyor.
-    // meSpeak eSpeak motorunun JS'e derlenmiş hâlidir; ses AudioContext/Web Audio
-    // ile sentezlenir, hiçbir ağ isteği atılmaz.
+    // ── TTS: Web Speech API (SpeechSynthesis) — tarayıcının yerleşik ses
+    // sentezleyicisi. Ağ isteği atmaz, harici dosya/kütüphane gerektirmez;
+    // masaüstü ve mobil tarayıcılarda (Chrome, Edge, Safari, Firefox) native
+    // olarak desteklenir. Not: bazı Android WebView gömme senaryolarında bu
+    // API kısıtlı olabilir — böyle bir ortamda çalıştırılacaksa meSpeak.js
+    // tabanlı sürüme geri dönülebilir.
     //
-    // ÖNEMLİ: meSpeak.speak() kendi dahili kuyruğuna sahiptir — config/voice
-    // henüz yüklenmemişse çağrıyı otomatik olarak erteler ve voice yüklenince
-    // (setVoiceData → executeQueuedCalls) kendiliğinden işler. Bu yüzden burada
-    // ayrıca bir "hazır mı, bekle" döngüsü kurmuyoruz; meSpeak'in kendisine
-    // güveniyoruz. Tek istisna: meSpeak.js dosyasının kendisi hiç yüklenmemişse
-    // (script tag eksik/bozuk), o zaman kuyruğa da girilemez — o durumu ayrıca
-    // ele alıyoruz.
-    let meSpeakSetupStarted = false;
-    let meSpeakConfigReady  = false;
-    let meSpeakVoiceReady   = false;
-
-    // Konsola erişimi olmayan ortamlarda (bu APK'nın WebView'i gibi) hata
-    // ayıklamayı mümkün kılmak için, Live overlay'in açık/kapalı olmasından
-    // bağımsız çalışan sabit bir uyarı kutusu oluşturuyoruz — sayfanın en
-    // üstüne, her zaman görünür şekilde. Bu geçicidir, sorun çözülünce
-    // bu fonksiyon ve çağrıları kaldırılabilir.
-    // Not: Ekrandaki kırmızı uyarı kutusu, hata ayıklama tamamlandığı için
-    // kaldırıldı. Konsola loglama (chrome://inspect ile görülebilir) duruyor,
-    // ileride tekrar ihtiyaç olursa buraya kolayca eklenebilir.
-    function ttsDebug(msg) {
-      console.error('[meSpeak]', msg);
+    // Türkçe ses (tr-TR) seçimi: speechSynthesis.getVoices() bazı tarayıcılarda
+    // ASENKRON dolar (ilk çağrıda boş dizi döner, sesler arka planda yüklenip
+    // 'voiceschanged' event'i ateşlenir). Bu yüzden sabit bir voice objesine
+    // değil, her speak() çağrısında güncel listeden Türkçe sesi arayan bir
+    // fonksiyona güveniyoruz — voice henüz yüklenmemişse utterance.lang='tr-TR'
+    // zaten tarayıcıya doğru telaffuz motorunu seçmesi için yeterli bir ipucu.
+    let voicesReady = false;
+    function pickTurkishVoice() {
+      const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+      if (voices.length) voicesReady = true;
+      return voices.find(v => v.lang === 'tr-TR')
+          || voices.find(v => v.lang && v.lang.startsWith('tr'))
+          || null;
     }
-
-    function ensureMeSpeakLoaded() {
-      if (meSpeakSetupStarted) return;
-      if (typeof meSpeak === 'undefined') {
-        ttsDebug('meSpeak.js yüklenemedi (script tag çalışmadı)');
-        return;
-      }
-      meSpeakSetupStarted = true;
-
-      // Teşhis: sayfanın gerçek URL şemasını göster. meSpeak'in loadConfig/
-      // loadVoice başarı kontrolü "location.href file: ile başlıyor mu"
-      // testine dayanıyor (localmode) — WebView farklı bir şema (content://,
-      // https://appassets.androidplatform.net/, https://localhost/ vb.)
-      // kullanıyorsa bu testin sonucu değişir.
-      ttsDebug('sayfa URL: ' + self.location.href);
-
-      try {
-        // Dosya adları meSpeak'in resmi dağıtımındaki standart adlardır:
-        // mespeak_config.json (kök dizin) ve voices/tr.json (Türkçe ses verisi).
-        // Bu iki dosyanın HTML ile aynı klasörde olması gerekiyor.
-        //
-        // NOT: loadConfig'in callback'i parametresiz çağrılır (setConfigData
-        // içinde "callback()") VE hata durumunda callback hiç tetiklenmez —
-        // sadece meSpeak'in kendi console.log'una hata yazılır. Bu yüzden
-        // başarıyı callback'ten değil, kısa bir gecikme sonrası
-        // isConfigLoaded() kontrolünden anlıyoruz.
-        meSpeak.loadConfig('mespeak_config.json');
-        setTimeout(() => {
-          meSpeakConfigReady = meSpeak.isConfigLoaded();
-          ttsDebug('mespeak_config.json durumu: ' + (meSpeakConfigReady ? 'YÜKLENDİ ✅' : 'YÜKLENEMEDİ ❌'));
-        }, 2000);
-
-        // loadVoice'un callback'i (success, info) ile çağrılır, hata
-        // durumunda da tetiklenir — bu yüzden burada callback'e güvenmek
-        // güvenli.
-        // NOT: voices/tr.json dosyası www/ klasörünün İÇİNDE değil, bir üst
-        // dizinde duruyor (assets/voices/tr.json, assets/www/Çeka.html ile
-        // kardeş konumda) — bu yüzden "../" ile bir üst dizine çıkıyoruz.
-        meSpeak.loadVoice('../voices/tr.json', (success, info) => {
-          meSpeakVoiceReady = !!success;
-          ttsDebug('voices/tr.json durumu: ' + (success ? ('YÜKLENDİ ✅ (' + info + ')') : ('YÜKLENEMEDİ ❌ — ' + info)));
-        });
-      } catch (e) {
-        ttsDebug('meSpeak kurulum hatası: ' + (e.message || e));
-      }
-    }
-    ensureMeSpeakLoaded();
-
-
-
-    // meSpeak'in altındaki Emscripten katmanı (intArrayFromString, mespeak.js
-    // satır ~478), metni C-belleğine yazarken her karakteri "charCodeAt(i) & 0xFF"
-    // ile TEK BYTE'A KESİYOR — gerçek bir UTF-8 çevirisi yapmıyor. Türkçe'ye
-    // özgü harfler (İ,ı,ş,ğ,Ş,Ğ — Latin Extended-A'da, U+0100'ün üzerinde) bu
-    // kesmeden TAMAMEN FARKLI sembollere dönüşüyor: ş(U+015F)→'_', ı(U+0131)→'1'
-    // gibi. ç/ö/ü (Latin-1 Supplement, U+00FF altı) byte değeri olarak sağlam
-    // kalıyor, ama motorun Türkçe sözlüğündeki (tr.json→dict) bu harfler UTF-8
-    // (çift-byte) kodlanmış olduğu için, tek-byte giriş ile eşleşmeme ihtimali
-    // var. Güvenli tarafta kalmak için hepsini eSpeak'in güvenilir şekilde
-    // işlediği düz Latin harflere çeviriyoruz. Sonuç, Türkçe fonetiğe %100
-    // sadık olmayabilir ama "harf harf" bozulmasından kesin olarak kurtarır.
-    const TR_TO_ESPEAK_SAFE = {
-      'İ': 'I', 'ı': 'i', 'Ş': 'S', 'ş': 's', 'Ğ': 'G', 'ğ': 'g',
-      'Ç': 'C', 'ç': 'c', 'Ö': 'O', 'ö': 'o', 'Ü': 'U', 'ü': 'u'
-    };
-    function toEspeakSafeText(text) {
-      return text.replace(/[İıŞşĞğÇçÖöÜü]/g, (ch) => TR_TO_ESPEAK_SAFE[ch] || ch);
+    if (window.speechSynthesis) {
+      // Sesler hazır olduğunda önden bir kere okuyup önbelleğe alalım ki
+      // ilk speak() çağrısında gecikme yaşanmasın.
+      window.speechSynthesis.onvoiceschanged = () => { pickTurkishVoice(); };
+      pickTurkishVoice();
     }
 
     function speak(text) {
@@ -4267,74 +4290,42 @@
         .trim();
 
       if (!clean) { startListening(); return; }
-      // Ekrandaki transkript ORİJİNAL Türkçe metni gösterir — sadece eSpeak'e
-      // giden ses verisi dönüştürülür, kullanıcının gördüğü yazı bozulmaz.
+      // Ekrandaki transkript ile seslendirilen metin birebir aynı — SpeechSynthesis
+      // Türkçe karakterleri (İ,ı,ş,ğ,Ç,ö,ü) native UTF-16 olarak işlediği için
+      // meSpeak'teki gibi bir ASCII dönüştürmeye ihtiyaç yok.
       if (transEl()) transEl().textContent = clean.slice(0, 120) + (clean.length > 120 ? '\u2026' : '');
       setState('speaking');
 
-      if (typeof meSpeak === 'undefined') {
-        ttsDebug('meSpeak tanımsız — speak() çağrısı sırasında');
+      if (!window.speechSynthesis) {
         onSpeakEnd();
         return;
       }
 
-      // meSpeak henüz kurulmaya başlamadıysa (örn. sayfa çok hızlı açıldıysa) dene.
-      ensureMeSpeakLoaded();
+      // Çok uzun metinlerde bazı motorlar tek seferde kesilebiliyor,
+      // meSpeak sürümüyle tutarlı olacak şekilde aynı üst sınırı koruyoruz.
+      const spokenText = clean.slice(0, 600);
 
-      // eSpeak tek seferde çok uzun metinlerde kimi zaman kesilebiliyor,
-      // makul bir üst sınır koyuyoruz.
-      const spokenText = toEspeakSafeText(clean.slice(0, 600));
+      const u = new SpeechSynthesisUtterance(spokenText);
+      u.lang  = 'tr-TR';
+      u.rate  = 1;
+      u.pitch = 1;
+      u.volume = 1;
+      const trVoice = pickTurkishVoice();
+      if (trVoice) u.voice = trVoice;
 
-      // KRİTİK: canPlay=false ise meSpeak.speak() callback'i HİÇ ÇAĞIRMADAN
-      // sessizce 0 döner (kaynak: speak() fonksiyonu, "if (!canPlay &&
-      // !args.rawdata) return 0" — playSound'a hiç ulaşmadan). Bu durumu
-      // önceden yakalamazsak UI sonsuza dek "konuşuyor" durumunda kalır,
-      // çünkü onSpeakEnd() hiç tetiklenmez.
-      if (!meSpeak.canPlay()) {
-        ttsDebug('meSpeak.canPlay()=false — bu WebView Web Audio API\'yi de audio/x-wav MIME tipini de desteklemiyor');
-        onSpeakEnd();
-        return;
-      }
+      u.onend   = () => onSpeakEnd();
+      u.onerror = () => onSpeakEnd();
 
+      utterance = u;
       try {
-        // NOT: meSpeak.speak() içindeki playSound(), oynatılamayan durumlarda
-        // (canPlay=false, geçersiz stream vb.) hem callback(false) çağırır
-        // HEM DE 0 döndürür. Callback zaten onSpeakEnd()'i tetiklediği için,
-        // dönüş değerini (playId) ayrıca kontrol edip onSpeakEnd()'i bir daha
-        // çağırmıyoruz — bu çift tetikleme riskine yol açardı.
-        //
-        // SES AYARLARI (kaynak koddan doğrulanmış sınırlar: speed 80-450,
-        // varsayılan 175 — mespeak.js satır ~34800, ~72151):
-        // - speed: 175 (varsayılana döndük). Önceki denemede 165 (varsayılanın
-        //   altı) kullanmıştık; düşük hız eSpeak'te daha "kekeleyerek" hissettirir,
-        //   çünkü motor her heceyi daha uzun gererek konuşur. Varsayılan hız
-        //   motorun kendi ürettiği prosodi (vurgu/tonlama) eğrileriyle uyumlu
-        //   tasarlandığı için genelde daha doğal duruyor.
-        // - wordgap: 5 (10ms biriminde, yani ~50ms) — kelimeler arasına küçük
-        //   bir boşluk ekliyor. Amaç: motorun kelimeleri birbirine yapıştırmak
-        //   yerine ayırt edilebilir şekilde art arda söylemesi. Çok yüksek
-        //   wordgap (ör. 20+) konuşmayı yapay şekilde parçalı/duraklamalı yapar,
-        //   bu yüzden düşük tutuyoruz.
-        // - pitch: 45 (varsayılan 50'den biraz düşük) — çok hafif bir düşüş,
-        //   eSpeak'in tiz/"sivri" formant sesini biraz yumuşatmak için.
-        meSpeak.speak(spokenText, {
-          amplitude: 100,
-          pitch: 45,
-          speed: 175,
-          wordgap: 5,
-          voice: 'tr',
-          log: true     // eSpeak komutunu konsola yazdırır — hangi voice/config kullanıldığını gösterir
-        }, (success) => {
-          if (!success) ttsDebug('meSpeak.speak başarısız oldu (sebep belirsiz — WAV verisi bozuk olabilir)');
-          onSpeakEnd();
-        });
+        window.speechSynthesis.speak(u);
       } catch (e) {
-        ttsDebug('meSpeak.speak() hata fırlattı: ' + (e.message || e));
         onSpeakEnd();
       }
     }
 
     function onSpeakEnd() {
+      utterance = null;
       if (!active) return;
       if (transEl()) transEl().textContent = 'Sen konuş, ben dinliyorum \ud83c\udf99\ufe0f';
       setState('idle');
@@ -4343,9 +4334,10 @@
 
     // ── TTS'i Durdur ──
     function stopSpeaking() {
-      if (typeof meSpeak !== 'undefined') {
-        try { meSpeak.stop(); } catch (e) {}
+      if (window.speechSynthesis) {
+        try { window.speechSynthesis.cancel(); } catch (e) {}
       }
+      utterance = null;
     }
 
     // ── STT: Dinlemeyi Başlat ──
