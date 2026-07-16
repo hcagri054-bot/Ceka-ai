@@ -27,8 +27,7 @@ Uygulamanın Android sürümünü cihazınıza yüklemek için:
 
 ### 2. Web (.html) Sürümü
 Uygulamayı tarayıcı üzerinden çalıştırmak için:
-1.  Depodaki **`Çeka.html`** dosyasını bilgisayarınıza indirin.
-2.  Dosyaya çift tıklayarak herhangi bir modern tarayıcıda (Chrome, Edge, Safari, Firefox) doğrudan çalıştırın.
+Bu linki açın:https://hilarious-pastelito-0d801c.netlify.app/
 
 ---
 
@@ -72,8 +71,8 @@ To install the Android version of the application on your device:
 
 ### 2. Web (.html) Version
 To run the application via a browser:
-1. Download the **`Çeka.html`** file from the repository to your computer.
-2. Double-click the file to run it directly in any modern browser (Chrome, Edge, Safari, Firefox).
+Open this link:https://hilarious-pastelito-0d801c.netlify.app/
+
 
 ---
 
