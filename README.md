@@ -27,7 +27,7 @@ Uygulamanın Android sürümünü cihazınıza yüklemek için:
 
 ### 2. Web (.html) Sürümü
 Uygulamayı tarayıcı üzerinden çalıştırmak için:
-Bu linki açın:https://hilarious-pastelito-0d801c.netlify.app/
+Bu linki açın:ceka32.netlify.app
 
 ---
 
@@ -71,7 +71,7 @@ To install the Android version of the application on your device:
 
 ### 2. Web (.html) Version
 To run the application via a browser:
-Open this link:https://hilarious-pastelito-0d801c.netlify.app/
+Open this link:ceka32.netlify.app
 
 
 ---
