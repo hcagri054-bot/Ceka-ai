@@ -71,7 +71,7 @@ To install the Android version of the application on your device:
 
 ### 2. Web (.html) Version
 To run the application via a browser:
-Open this link:ceka32.netlify.app
+Open this link:https://ceka32.netlify.app
 
 
 ---
