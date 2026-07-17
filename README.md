@@ -26,8 +26,8 @@ Uygulamanın Android sürümünü cihazınıza yüklemek için:
 3.  Dosyayı açarak yükleme işlemini tamamlayın.
 
 ### 2. Web (.html) Sürümü
-Uygulamayı tarayıcı üzerinden çalıştırmak için:
-Bu linki açın:https://ceka32.netlify.app
+Uygulamayı tarayıcı üzerinden çalıştırmak için
+bu linki açın:https://ceka32.netlify.app
 
 ---
 
@@ -70,8 +70,8 @@ To install the Android version of the application on your device:
  3. Complete the installation process by opening the file.
 
 ### 2. Web (.html) Version
-To run the application via a browser:
-Open this link:https://ceka32.netlify.app
+To run the application via a browser
+open this link:https://ceka32.netlify.app
 
 
 ---
